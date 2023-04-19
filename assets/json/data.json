@@ -1,0 +1,62 @@
+
+
+
+
+[
+  {
+     "id" : 1,
+     "quntity": 1,
+     "name": "Pizza",
+     "category": "Food",
+     "price": 700  
+  },
+      {
+      "id" : 2,
+      "quntity": 1,
+      "name": "Burger",
+      "category": "Food",
+      "price": 700
+      },
+      {
+      "id" : 3,
+      "quntity": 1,
+      "name": "Puff",
+      "category": "Food",
+      "price": 40
+      },
+      {
+      "id" : 4,
+      "quntity": 1,
+      "name": "Dosa",
+      "category": "Food",
+      "price": 700
+      },
+      {
+      "id" : 5,
+      "quntity": 1,
+      "name": "Vadapav",
+      "category": "Food",
+      "price": 700
+      },
+      {
+      "id" : 6,
+      "quntity": 1,
+      "name": "manchuriyan",
+      "category": "Food",
+      "price": 100
+      },
+      {
+      "id" : 7,
+      "quntity": 1,
+      "name": "Samosa",
+      "category": "Food",
+      "price": 50
+      },
+      {
+      "id" : 8,
+      "quntity": 1,
+      "name": "Bhel",
+      "category": "Food",
+      "price": 70
+  }
+]
