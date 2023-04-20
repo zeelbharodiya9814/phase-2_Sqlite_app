@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:phase2_exam/views/screens/list_res.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../modal_class/product_class.dart';
@@ -17,31 +20,101 @@ class _HomePageState extends State<HomePage> {
 
 
 
-  late Future<List<Product>> getAllProduct;
+  // late Future<List<Product>> getAllProduct;
 
-  fetch() async {
+
+
+
+
+
+
+  // forGetVariable() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   bool? ispositionalArrived = prefs.getBool('positionalArrived') ?? false;
+  //
+  //   (ispositionalArrived == false)
+  //       ? DBHelper.dbHelper.JsonData1()
+  //       : getAllProduct = DBHelper.dbHelper.fetchData();
+  // }
+
+  int z = Random().nextInt(allProduct.length);
+
+  stocksOut() async {
+    Future.delayed(const Duration(seconds: 30), () async {
+      z;
+      await DBHelper.dbHelper.updateData(
+        quantity: 0,
+        id: z,
+        stock: "Out Of Stock",
+      );
+    });
+  }
+
+
+  // int seconds = 30;
+
+  // Duration? time() {
+  //   Future.delayed(const Duration(seconds: 1), () {
+  //     if (seconds > 0) {
+  //       seconds--;
+  //
+  //       print("==============");
+  //       print("time: $seconds");
+  //       print("==============");
+  //
+  //       return time();
+  //
+  //     } else {
+  //
+  //       return null;
+  //
+  //     }
+  //   });
+  //   return null;
+  // }
+
+
+  int t = 30;
+
+  timeOut() async {
     Future.delayed(
-        const Duration(seconds: 10),
-            () => setState(() {
-          getAllProduct = DBHelper.dbHelper.fetchData();
-        }));
+       Duration(seconds: 1),
+          () {
+        if (t > 0) {
+          timeOut();
+          setState(() {
+            t--;
+            // if(t == 0) {
+            //   Random().nextInt(allProduct.length);
+            //   stocksOut();
+            // }
+          });
+        }
+        return null;
+      },
+    );
   }
 
-  forGetVariable() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? ispositionalArrived = prefs.getBool('positionalArrived') ?? false;
 
-    (ispositionalArrived == false)
-        ? DBHelper.dbHelper.JsonData1()
-        : getAllProduct = DBHelper.dbHelper.fetchData();
-  }
+  Future? getData;
+
+
+  // fetch() async {
+  //   Future.delayed(
+  //       const Duration(seconds: 10),
+  //           () => setState(() {
+  //         getData = DBHelper.dbHelper.fetchData();
+  //       }));
+  // }
 
   @override
   void initState() {
     super.initState();
-    forGetVariable();
-    getAllProduct = DBHelper.dbHelper.fetchData();
-    fetch();
+    getData = DBHelper.dbHelper.fetchData();
+    stocksOut();
+    timeOut();
+    // forGetVariable();
+    // fetch();
   }
 
 
@@ -53,38 +126,58 @@ class _HomePageState extends State<HomePage> {
         title: Text("Product",style: TextStyle(
           color: Colors.white,fontSize: 20,
         ),),
+        actions: [
+          Icon(Icons.shopping_cart_outlined),
+          SizedBox(width: 15),
+        ],
       ),
+      drawer: Drawer(),
       body: FutureBuilder(
-        future: getAllProduct,
+        future: getData,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
 
-            List<Product> data = snapshot.data as List<Product>;
+            List<Product> data = snapshot.data;
 
             return ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, i) {
                   return Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left: 7,right: 7),
                     child: Card(
                       child: ListTile(
-                          isThreeLine: true,
-                          leading: Text("${data[i].id}"),
+                          isThreeLine: false,
+                         leading: Text("${i + 1}"),
                           title: Text(
                             '${data[i].name}\n${data[i].price}',
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 25),
+                                fontWeight: FontWeight.bold, fontSize: 17),
                           ),
                           subtitle: Text('${data[i].category}'),
-                          trailing: Text("asd"),
-                          // (data[i].id == a)
-                          //     ? StatefulBuilder(
-                          //   builder: (context, setState) {
-                          //     return Text(t.toString());
-                          //   },
-                          // )
-                          //     : Text('Out of Stock')),
-                    ),
+                          trailing:
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               InkWell(
+                                 onTap: () {
+                                   setState(() {
+                                     
+                                   });
+                                 },
+                                   child: Icon(Icons.add_shopping_cart)),
+                          SizedBox(height: 12,),
+                          (data[i].id == z)
+                              ? StatefulBuilder(
+                            builder: (context, setState) {
+                              return Text(t.toString());
+                            },
+                          )
+                              : Text('Out of Stock'),
+
+                         ],
+                        ),
+                      ),
                     ),
                   );
                 });

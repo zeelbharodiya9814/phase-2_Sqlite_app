@@ -15,11 +15,9 @@ class DBHelper {
   static final dbHelper = DBHelper._();
 
 
-   Database? db;
+  Database? db;
 
   Future<void> initDB() async {
-    // String df = await getDatabasesPath();
-    // String dm = await getDatabasesPath();
 
     String directory = await getDatabasesPath();
     String path = join(directory, "demo.db");
@@ -31,67 +29,39 @@ class DBHelper {
         });
   }
 
-  // Future<void> insertData() async {
-  //   initDB();
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool isStored = prefs.getBool('ALL_PRO') ?? false;
-  //
-  //   if (isStored == false) {
-  //     for (int i = 0; i < allProduct.length; i++) {
-  //       Product data = allProduct[i];
-  //       String query =
-  //           "INSERT INTO products(id, name, category,  quantity, price) VALUES(?, ?, ?, ?, ?);";
-  //       List args = [
-  //         data.id,
-  //         data.name,
-  //         data.category,
-  //         data.quntity,
-  //         data.price,
-  //       ];
-  //       await db!.rawInsert(query, args);
-  //     }
-  //     prefs.setBool('ALL_PRO', true);
-  //     print('--------------------------');
-  //     print('record Inserted');
-  //     print('--------------------------');
-  //   }
-  // }
-
-
-  Future<int?> insertData({required String name,required String category,required int price,required int quantity}) async {
+  Future<void> insertData() async {
     await initDB();
 
-    String query = "INSERT INTO products(name,category,price,quantity) VALUES(?, ?, ?, ?);";
-    List args = [name,category,price,quantity];
 
-    int res = await db!.rawInsert(query, args);
+      for (int i = 0; i < allProduct.length; i++) {
+        ProductData data = ProductData.fromMap(data: allProduct[i]);
+        String query =
+            "INSERT INTO products(name, category,  quantity, price) VALUES(?, ?, ?, ?);";
+        List args = [
 
-    print("Table inserted Successfully $res");
+          data.name,
+          data.category,
+          data.quantity,
+          data.price,
+        ];
+        await db!.rawInsert(query, args);
+      }
 
-    return res;
+      print('--------------------------');
+      print('record Inserted');
+      print('--------------------------');
   }
 
-
-  // Future<List<Product>> fetchData() async {
-  //
-  //   await initDB();
-  //
-  //   String query = "SELECT * FROM products";
-  //
-  //   List<Map<String, dynamic>> data = await db!.rawQuery(query);
-  //   List<Product> allData =
-  //   data.map((e) => Product.fromMap(data: e)).toList();
-  //   return allData;
-  // }
 
 
   Future<List<Product>> fetchData() async {
 
     await initDB();
-
+    await insertData();
+   
     String query = "SELECT * FROM products;";
 
-    List<Map<String , dynamic>> data = await db!.rawQuery(query);
+    List<Map<String, dynamic>> data = await db!.rawQuery(query);
 
     List<Product> allData = data.map((e) => Product.fromMap(data: e)).toList();
 
@@ -103,7 +73,7 @@ class DBHelper {
 
 
 
-  Future<void> updateData({required int id, required int quantity}) async {
+  Future<void> updateData({required int id, required int quantity,required String stock}) async {
 
     await initDB();
 
@@ -113,16 +83,17 @@ class DBHelper {
   }
 
 
-  JsonData1() async {
-    String jsonData = await rootBundle.loadString("assets/json/data.json");
+  Future<int> delete({required int id}) async {
 
-    List res = jsonDecode(jsonData);
+    await initDB();
 
-    List allPro = res.map((e) => Product.fromMap(data: e)).toList();
+    String query = "DELETE FROM products WHERE id = ?;";
+    List args = [id];
 
-    allPro.map((e) =>
-        DBHelper.dbHelper.insertData(name: e.name, category: e.category, price: e.price, quantity: e.quntity))
-        .toList();
+    int res = await db!.rawDelete(query, args); // returns total numbers of deleted records
+
+    return res;
+
   }
 
 }
@@ -206,18 +177,7 @@ class DBHelper {
 //   }
 //
 //
-//   Future<int> delete({required int id}) async {
-//
-//     await initDB();
-//
-//     String query = "DELETE FROM Products WHERE id = ?;";
-//     List args = [id];
-//
-//     int res = await db!.rawDelete(query, args); // returns total numbers of deleted records
-//
-//     return res;
-//
-//   }
+
 //
 //   Future<int> update({required Product data,required int id}) async {
 //
